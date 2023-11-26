@@ -35,10 +35,14 @@ function ResponsiveAppBar() {
   };
 
   const handleCloseNavMenu = () => {
+    router.push("/admin/users");
     setAnchorElNav(null);
   };
 
   const handleCloseUserMenu = (setting: string) => {
+    if (setting === "Profile") {
+      router.push("/admin/profile");
+    }
     if (setting === "Logout") {
       localStorage.clear();
       router.push("/admin/login");

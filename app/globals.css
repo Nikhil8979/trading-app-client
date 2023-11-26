@@ -90,3 +90,40 @@ a {
     color-scheme: dark;
   }
 }
+
+.wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 5rem;
+
+  font-weight: 700;
+}
+
+.wrapper form {
+  padding: 2.5rem 3rem;
+}
+
+.wrapper form .btn,
+.booking-btn,
+.update-btn,
+#review_btn,
+.new-room-btn,
+#forgot_password_button,
+#new_password_button,
+.search-form .btn {
+  background-color: #1565c0;
+  border-color: #1565c0;
+  color: white;
+  margin-top: 2.5rem;
+  font-weight: bold;
+}
+
+.container {
+  min-height: 90vh;
+  padding: 0 0.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
