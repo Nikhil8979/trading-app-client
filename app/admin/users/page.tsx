@@ -80,7 +80,7 @@ export default function UsersPage() {
         }
       ]
     >
-  >([{}]);
+  >([]);
   const [limit, setLimit] = React.useState(10);
   const [page, setPage] = React.useState(1);
   const [loading, setLoading] = React.useState(false);
@@ -98,7 +98,7 @@ export default function UsersPage() {
       ] = `Bearer ${localStorage.getItem("token")}`;
 
       const { data } = await axios.get(
-        `http://localhost:7000/api/retrieve/users?limit=${limit}&page=${page}&search=${search}`
+        `https://trading-app-service.onrender.com/api/retrieve/users?limit=${limit}&page=${page}&search=${search}`
       );
       console.log(data);
       setUsers(data?.data?.users);
@@ -123,7 +123,7 @@ export default function UsersPage() {
         "Authorization"
       ] = `Bearer ${localStorage.getItem("token")}`;
       const { data } = await axios.put(
-        "http://localhost:7000/api/update/account",
+        "https://trading-app-service.onrender.com/api/update/account",
         { id }
       );
       if (data?.type === "success") {

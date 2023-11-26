@@ -53,6 +53,33 @@ body {
     rgb(var(--background-start-rgb));
 }
 
+/**************candidate sidebar for mobile***************/
+.main__root {
+  width: 233.1px;
+  height: 100vh;
+  background-color: white;
+  left: -233px;
+  top: 0;
+  position: fixed;
+  transition: ease-in-out 0.3s;
+  z-index: 1200;
+}
+
+.main__root::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(124, 128, 128);
+}
+
+.main__root:hover {
+  margin-left: 233px;
+  position: fixed;
+  /*overflow-y: scroll;*/
+  transition: ease-in-out 0.3s;
+}
+
 a {
   color: inherit;
   text-decoration: none;

@@ -96,10 +96,13 @@ export default function LoginPage() {
   const login = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.post("http://localhost:7000/api/login", {
-        ...params,
-        role: "admin",
-      });
+      const { data } = await axios.post(
+        "https://trading-app-service.onrender.com/api/login",
+        {
+          ...params,
+          role: "admin",
+        }
+      );
       if (data?.type === "error") {
         setAlertType("error");
         setError({ type: "error", message: data?.message || data?.error });
