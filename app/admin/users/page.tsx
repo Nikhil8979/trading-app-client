@@ -10,6 +10,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import {
   Alert,
+  AlertColor,
   Grid,
   LinearProgress,
   Snackbar,
@@ -62,15 +63,34 @@ const rows = [
   createData("Gingerbread", 356, 16.0, 49, 3.9),
 ];
 
+interface error {
+  type: string | undefined;
+  message: string;
+}
 export default function UsersPage() {
-  const [users, setUsers] = React.useState([]);
+  const [users, setUsers] = React.useState<
+    Partial<
+      [
+        {
+          _id?: string | undefined;
+          name?: string;
+          email?: string;
+          contact_number?: number;
+          active?: boolean;
+        }
+      ]
+    >
+  >([{}]);
   const [limit, setLimit] = React.useState(10);
   const [page, setPage] = React.useState(1);
   const [loading, setLoading] = React.useState(false);
   const [totalCount, setTotalCount] = React.useState(0);
-  const [error, setError] = React.useState({});
+  const [error, setError] = React.useState<Partial<error>>({});
+  const [alertType, setAlertType] = React.useState<string>("success");
+
   const router = useRouter();
-  const getUsers = async (search) => {
+
+  const getUsers = async (search: string) => {
     try {
       setLoading(true);
       axios.defaults.headers.common[
@@ -84,15 +104,19 @@ export default function UsersPage() {
       setUsers(data?.data?.users);
       setLoading(false);
       setTotalCount(data?.data?.total);
-    } catch (e) {
-      if (e?.response?.status === 401) {
-        router.push("/admin/login");
+    } catch (err) {
+      if (err) {
+        if (err instanceof Error && "response" in err) {
+          const response: any = err.response;
+          if (response?.status === 401) {
+            router.push("/admin/login");
+          }
+        }
       }
-      console.log(e, "--- users page error -----");
     }
   };
 
-  const udpdateAccount = async (id) => {
+  const udpdateAccount = async (id: string | undefined) => {
     try {
       setLoading(true);
       axios.defaults.headers.common[
@@ -103,6 +127,7 @@ export default function UsersPage() {
         { id }
       );
       if (data?.type === "success") {
+        setAlertType("success");
         setError({ type: "success", message: data?.message });
       }
       await getUsers("");
@@ -120,6 +145,13 @@ export default function UsersPage() {
   React.useEffect(() => {
     console.log(error);
   }, [error]);
+  const severity: AlertColor | undefined = React.useMemo(
+    () =>
+      typeof alertType && ["success", "error", "warning"].includes(alertType)
+        ? (alertType as AlertColor)
+        : undefined,
+    [alertType]
+  );
   return (
     <>
       <div className="px-3">
@@ -149,14 +181,14 @@ export default function UsersPage() {
             </TableHead>
             <TableBody>
               {users?.map((row) => (
-                <StyledTableRow key={row._id}>
+                <StyledTableRow key={row?._id}>
                   <StyledTableCell component="th" scope="row">
                     {row?.name ?? "NA"}
                   </StyledTableCell>
                   <StyledTableCell align="right">{row?.email}</StyledTableCell>
 
                   <StyledTableCell align="right">
-                    {row.contact_number}
+                    {row?.contact_number}
                   </StyledTableCell>
                   <StyledTableCell align="right">
                     <Switch
@@ -196,7 +228,7 @@ export default function UsersPage() {
           >
             <Alert
               onClose={() => setError({})}
-              severity={error?.type}
+              severity={severity}
               sx={{ width: "100%" }}
             >
               {error?.message}

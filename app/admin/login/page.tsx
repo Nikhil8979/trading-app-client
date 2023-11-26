@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 // import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import {
   TextField,
@@ -12,6 +12,7 @@ import {
   createTheme,
   Snackbar,
   Alert,
+  AlertColor,
 } from "@mui/material";
 
 import makeStyles from "@mui/styles/makeStyles";
@@ -75,10 +76,15 @@ const theme = createTheme();
 //   },
 // }));
 
+interface error {
+  type: string | undefined;
+  message: string;
+}
 export default function LoginPage() {
   const [params, setParams] = useState({});
-  const [error, setError] = useState({});
+  const [error, setError] = useState<Partial<error>>({});
   const [loading, setLoading] = useState(false);
+  const [alertType, setAlertType] = useState<string>("success");
   const router = useRouter();
   function valueChange(
     e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
@@ -95,25 +101,46 @@ export default function LoginPage() {
         role: "admin",
       });
       if (data?.type === "error") {
+        setAlertType("error");
         setError({ type: "error", message: data?.message || data?.error });
         setLoading(false);
       }
       if (data?.type === "success") {
+        setAlertType("success");
         setError({ type: "success", message: data?.message || data?.error });
         localStorage.setItem("token", data?.token);
         setLoading(false);
         router.push("/admin/users");
       }
-    } catch (e) {
-      const { data } = e.response;
-      setLoading(false);
-      setError({ type: "error", message: data?.error || data?.message });
+    } catch (err) {
+      console.log(err);
+      if (err instanceof Error && "response" in err) {
+        const data: any = err.response;
+
+        if ("data" in data) {
+          setLoading(false);
+          setAlertType("error");
+          setError({
+            type: "error",
+            message: data?.data?.error || data?.data?.message,
+          });
+        }
+      }
     }
   };
   // const classes = useStyles();
   useEffect(() => {
     console.log(error, "-- erro ");
   }, [error]);
+
+  const severity: AlertColor | undefined = useMemo(
+    () =>
+      typeof error.type === "string" &&
+      ["success", "error", "warning"].includes(alertType)
+        ? (error.type as AlertColor)
+        : undefined,
+    [alertType]
+  );
 
   return (
     <Container maxWidth={"xl"} className={styles.container}>
@@ -202,7 +229,7 @@ export default function LoginPage() {
         >
           <Alert
             onClose={() => setError({})}
-            severity={error?.type}
+            severity={severity}
             sx={{ width: "100%" }}
           >
             {error?.message}

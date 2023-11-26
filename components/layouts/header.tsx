@@ -38,9 +38,9 @@ function ResponsiveAppBar() {
     setAnchorElNav(null);
   };
 
-  const handleCloseUserMenu = (setting) => {
+  const handleCloseUserMenu = (setting: string) => {
     if (setting === "Logout") {
-      localStorage.clear("");
+      localStorage.clear();
       router.push("/admin/login");
     }
     setAnchorElUser(null);
